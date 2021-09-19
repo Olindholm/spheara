@@ -1,10 +1,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+int main(void);
+
+extern "C" void SysTick_Handler(void);
 void SystemClock_Init(void);
-void Error_Handler(void);
-static void GPIO_Init(void);
-//static void DMA_Init(void);
-//static void SPI2_Init(void);
+void GPIO_Init(void);
 
 #endif /* MAIN_H */
