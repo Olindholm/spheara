@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include "stm32f1xx.h"
-#include "stm32f1xx_hal.h"
 #include "main.h"
+#include "stm32f1xx.h"
+#include "error.h"
 #include "program.h"
 
 int main() {
@@ -16,11 +15,12 @@ int main() {
 
     // Run program
     Program_Run();
+
     return 0;
 }
 
 // Required for HAL_Delay to work.
-extern "C" void SysTick_Handler(void) {
+void SysTick_Handler(void) {
 	HAL_IncTick();
 }
 
@@ -49,13 +49,8 @@ void SystemClock_Init(void) {
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) Error_Handler();
 }
 
-void Error_Handler(void) {
-    __disable_irq();
-    while (1) {}
-}
-
-static void GPIO_Init(void) {
-    /* GPIO Ports Clock Enable */
+void GPIO_Init(void) {
+    // GPIO Ports Clock Enable
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOD_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();

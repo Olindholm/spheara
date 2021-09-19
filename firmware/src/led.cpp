@@ -1,10 +1,10 @@
 #include "led.h"
 
 void LED_Init(void) {
-    /* Turn off LED (default) */
+    // Turn off LED (default)
     LED_Off();
 
-    /* Configure LED pin */
+    // Configure LED pin
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Pin = LED_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
