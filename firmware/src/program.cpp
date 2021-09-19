@@ -2,35 +2,41 @@
 #include "led.h"
 #include "spi.h"
 #include "dma.h"
-
-#define LED_COUNT 1
-#define BUFFER_LENGTH (1+LED_COUNT+1)
-uint32_t buffer_tx[BUFFER_LENGTH] = { 0 };
-uint32_t buffer_rx[BUFFER_LENGTH] = { 0 };
+#include "ledarray.h"
 
 void Program_Run(void) {
     // Init peripherals
     LED_Init();
     DMA_Init();
     SPI2_Init();
-    
-    // Init data buffer
-    buffer_tx[0] = 0x00000000;
-    buffer_tx[BUFFER_LENGTH-1] = 0xFFFFFFFF;
+    LEDArray_Init();
 
-    uint32_t colors[] = {
-        0xFF0000FF,
-        0x0000FFFF,
-        0x00FF00FF,
+    // Rainbow Program
+    float rainbow_program[6][3] = {
+        // Red, green, blue
+        { 1, 0, 0 },
+        { 1, 1, 0 },
+        { 0, 1, 0 },
+        { 0, 1, 1 },
+        { 0, 0, 1 },
+        { 1, 0, 1 },
     };
 
-    int i = 0;
-    while (1) {
-        
-        buffer_tx[1] = colors[i];
-        SPI2_TransmitReceive((uint8_t *) buffer_tx, (uint8_t *) buffer_rx, sizeof(uint32_t)/sizeof(uint8_t) * BUFFER_LENGTH);
+    int program_pointer = 0;
+    int program_size = sizeof(rainbow_program) / sizeof(rainbow_program[0]);
 
-        HAL_Delay(500);
-        i = (i+1) % (sizeof(colors) / sizeof(colors[0]));
+    while (1) {
+        // Change Pixel colors
+        for (int i = 0; i < LED_COUNT; i++) {
+            int program_index = (program_pointer+i) % program_size;
+            LEDArray_SetLED(i, rainbow_program[program_index][0], rainbow_program[program_index][1], rainbow_program[program_index][2], 0.05f);
+        }
+
+        // Flush (update/refresh) LEDs
+        LEDArray_Flush();
+
+        // Continue...
+        program_pointer = (program_pointer+1) % program_size;
+        HAL_Delay(250);
     }
 }

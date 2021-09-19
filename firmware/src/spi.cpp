@@ -1,6 +1,5 @@
 #include "spi.h"
 #include "error.h"
-#include "led.h"
 
 SPI_HandleTypeDef hspi2;
 extern DMA_HandleTypeDef hdma_spi2_rx;
@@ -18,10 +17,6 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {}
 
 HAL_StatusTypeDef SPI2_TransmitReceive(uint8_t* buffer_tx, uint8_t* buffer_rx, int length) {
     return HAL_SPI_TransmitReceive_DMA(&hspi2, buffer_tx, buffer_rx, length);
-}
-
-HAL_StatusTypeDef SPI2_Transmit(uint8_t* buffer_tx, int length) {
-    return HAL_SPI_Transmit_DMA(&hspi2, buffer_tx, length);
 }
 
 void SPI2_Init(void) {
